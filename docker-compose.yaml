@@ -1,0 +1,96 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+        # Store mysql server data on persistent volume
+        - ./persistent_data/db_data:/var/lib/mysql:delegated
+    restart: always
+    environment:
+      # The following environment variables are defined by MySQL docker image
+      # Read more about them at https://hub.docker.com/_/mysql/
+      # When these variables are assigned
+      #   mysql root user password is assigned as noted
+      #   database specified by MYSQL_DATABASE is created
+      #   user specified by MYSQL_USER is created with All Grants
+      #   password specified by MYSQL_PASSWORD is assigned to the user
+      #   The database, user and password are required for drupal installation
+      #
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      # To set your own password delete line with MYSQL_RANDOM_ROOT_PASSWORD 
+      # also uncomment line with MYSQL_ROOT_PASSWORD
+      # MYSQL_ROOT_PASSWORD: your_secret_password 
+      #
+      MYSQL_DATABASE: 'db4drupal'
+      MYSQL_USER: 'drupal'
+      # When MYSQL_PASSWORD is set to 'GENERATE_RANDOM_PASSWORD' 
+      # it will be changed during drupal installation, this will ensure security 
+      MYSQL_PASSWORD: 'GENERATE_RANDOM_PASSWORD'
+
+  seedmelab:
+    build:
+      context: setup
+    container_name: seedmelab
+    restart: always
+    ports: # local deployment can be accessed at http://localhost:8080
+    - '8080:80'
+    volumes:
+      # Store entire drupal code and site data on persistent volume
+      - ./persistent_data/site_data:/var/www:delegated
+    environment:
+      APACHE_DOCUMENT_ROOT: '/var/www/web'
+      # MYSQL variables must match as listed on db service for mysql above
+      # These are only used once by setup.sh and never again
+      #
+      MYSQL_DATABASE: 'db4drupal'
+      MYSQL_USER: 'drupal'
+      # When MYSQL_PASSWORD is set to 'GENERATE_RANDOM_PASSWORD' 
+      # it will be changed during drupal installation, this will ensure security 
+      MYSQL_PASSWORD: 'GENERATE_RANDOM_PASSWORD'
+      # If using your own MYSQL server
+      # additional variables for its host location and port must be specified
+      # MYSQL_HOST: 
+      # MYSQL_PORT: 
+      #
+      # Set site domain (fqdn) when deploying a public site
+      # Ignore these local deployments
+      LETSENCRYPT_HOST: $VIRTUAL_HOST
+      VIRTUAL_HOST: $VIRTUAL_HOST
+    depends_on:
+      - db
+
+  nginx-proxy:
+    build: setup/nginx_proxy/
+    ports:
+    - '80:80'
+    - '443:443'
+    volumes:
+      - html:/usr/share/nginx/html
+      - dhparam:/etc/nginx/dhparam
+      - vhost:/etc/nginx/vhost.d
+      - certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    labels:
+      - 'com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy'
+    restart: always
+    depends_on:
+      - seedmelab
+      - nginx-letsencrypt
+
+  nginx-letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: always
+    environment:
+      LETSENCRYPT_KEYSIZE: 2048
+
+# These volumes are used by nginx-letsencrypt and managed by docker
+volumes:
+  certs:
+  html:
+  vhost:
+  dhparam:

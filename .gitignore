@@ -1,0 +1,8 @@
+# Ignore persistent_data dir which contains db and site data
+persistent_data/
+
+# Ignore *.swp files created by text editor
+*.swp
+
+# Ignore other misc dir
+setup/scripts/utils

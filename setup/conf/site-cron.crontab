@@ -1,0 +1,2 @@
+# Run cron every five minutes
+*/5 * * * * cd $DRUPAL_SITE_DIR && drush cron 
