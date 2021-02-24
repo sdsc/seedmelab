@@ -18,11 +18,14 @@ SITE_CREDENTIALS="/tmp/site_credentials.txt"
 if [ "$MYSQL_PASSWORD" == "GENERATE_RANDOM_PASSWORD" ]; then
     NEW_MYSQL_PASSWORD=`pwgen 24`
     change_pass="SET PASSWORD = '${NEW_MYSQL_PASSWORD}';"
-    mysql --host db -u ${MYSQL_USER} --password='${MYSQL_PASSWORD}' -e "${change_pass}"
+    mysql --host db -u ${MYSQL_USER} --password="${MYSQL_PASSWORD}" -e "${change_pass}"
+    echo "MySQL user password changed from ${MYSQL_PASSWORD} to ${NEW_MYSQL_PASSWORD}" >> ${SITE_CREDENTIALS}
     MYSQL_PASSWORD=${NEW_MYSQL_PASSWORD}
 fi
 
-echo "Database credentials for the site are configured and stored in /var/www/web/sites/default/setting.php"
+
+echo "Database credentials for the site are configured, stored and used from /var/www/web/sites/default/setting.php"
+echo "MySQL user password is ${MYSQL_PASSWORD}" >> ${SITE_CREDENTIALS}
 
 if [ -z ${VIRTUAL_HOST+x} ]; then
     echo "Visit your site at ${VIRTUAL_HOST}" >> ${SITE_CREDENTIALS}
@@ -43,10 +46,10 @@ echo "Installing drupal site..."
 cd ${DRUPAL_SITE_DIR}
 
 if [ -z ${MYSQL_HOST+x} ] && [ -z ${MYSQL_PORT+x}   ]; then 
-    echo "Install using default database host"; 
+    echo "Install using included database service"; 
     drush site:install -vvv --db-url=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE} --site-name "${SITE_NAME}" --yes
 else 
-    echo "Install using provided database host"; 
+    echo "Install using other specified database host"; 
     drush site:install -vvv --db-url=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE} --site-name "${SITE_NAME}" --yes
 fi
 

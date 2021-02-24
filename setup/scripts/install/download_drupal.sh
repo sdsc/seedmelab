@@ -19,7 +19,7 @@ echo "Moving drupal project from ${TMP_DIR} to ${DRUPAL_SITE_DIR}"
 mv "${TMP_DIR}/composer.json" ${DRUPAL_SITE_DIR}
 mv "${TMP_DIR}/composer.lock" ${DRUPAL_SITE_DIR}
 mv "${TMP_DIR}/vendor" ${DRUPAL_SITE_DIR}
-mv "${TMP_DIR}/web/*" "${DRUPAL_SITE_DIR}/web"
+mv "${TMP_DIR}/web/*.*" "${DRUPAL_SITE_DIR}/web/"
 rmdir ${TMP_DIR}
 
 echo "Fetching SeedMeLab dependencies with composer..."
