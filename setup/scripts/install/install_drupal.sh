@@ -19,6 +19,7 @@ if [ "$MYSQL_PASSWORD" == "GENERATE_RANDOM_PASSWORD" ]; then
     NEW_MYSQL_PASSWORD=`pwgen 24`
     change_pass="SET PASSWORD = '${NEW_MYSQL_PASSWORD}';"
     mysql --host db -u ${MYSQL_USER} --password='${MYSQL_PASSWORD}' -e "${change_pass}"
+    MYSQL_PASSWORD=${NEW_MYSQL_PASSWORD}
 fi
 
 echo "Database credentials for the site are configured and stored in /var/www/web/sites/default/setting.php"
@@ -51,12 +52,14 @@ fi
 
 # Add locations for sync and private_files directories
 chmod u+w /var/www/web/sites/default/settings.php
-echo '$settings['config_sync_directory'] = "/var/www/sync";' >> ${DRUPAL_SITE_DIR}/web/sites/default/settings.php
-echo '$settings["file_private_path"] = "/var/private";' >> ${DRUPAL_SITE_DIR}/web/sites/default/settings.php
+echo '$settings["config_sync_directory"] = "/var/www/sync";' >> ${DRUPAL_SITE_DIR}/web/sites/default/settings.php
+echo '$settings["file_private_path"] = "/var/www/private_files";' >> ${DRUPAL_SITE_DIR}/web/sites/default/settings.php
 chmod u-w /var/www/web/sites/default/settings.php
 
-# Disable search block for bartik theme
+# Disable powered, search and tool blocks for bartik theme
 drush config:set block.block.bartik_search status 0 -y
+drush config:set block.block.bartik_tools status 0 -y
+drush config:set block.block.bartik_powered status 0 -y
 
 # Set passwords for admin and demo accounts
 echo "Set new admin password to: ${DRUPAL_ADMIN_PASS}"

@@ -24,9 +24,11 @@ rmdir ${TMP_DIR}
 
 echo "Fetching SeedMeLab dependencies with composer..."
 cd ${DRUPAL_SITE_DIR}
-# Drupal contributed modules
-composer require drupal/admin_toolbar drupal/restui drupal/smtp drupal/token 
-# SeedMeLab ecosystem modules
-composer require drupal/foldershare drupal/foldershare_rest drupal/formatter_suite 
 # Drupal shell for command line administration
 composer require drush/drush    
+# SeedMeLab ecosystem modules
+composer require drupal/foldershare drupal/foldershare_rest drupal/formatter_suite 
+# Drupal contributed modules
+composer require drupal/admin_toolbar drupal/restui drupal/smtp drupal/structure_sync drupal/token 
+# Drupal contributed themes
+composer require drupal/bootstrap4

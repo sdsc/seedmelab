@@ -2,8 +2,13 @@
 
 cd ${DRUPAL_SITE_DIR}
 
+install_contrib_themes() {
+  drush theme:enable bootstrap4 --yes
+}
+
+
 install_contrib_modules() {
-  drush pm:enable token restui admin_toolbar --yes
+  drush pm:enable token restui admin_toolbar admin_toolbar_tools structure_sync --yes
   drush pm:enable foldershare foldershare_rest --yes
   #drush pm:enable formatter_suit chart_suite --yes
 
@@ -65,6 +70,26 @@ install_core_modules
 echo "---------------------------------"
 echo "Installing contrib modules..."
 install_contrib_modules
+
+echo "---------------------------------"
+echo "Customizing SeedMeLab site..."
+install_contrib_themes
+# Set Bootstrap4 as default theme
+drush config-set system.theme default bootstrap4 --yes
+# Disable search and powered blocks for bootstrap4 theme
+drush config:set block.block.bootstrap4_search_form status 0 --yes
+drush config:set block.block.bootstrap4_powered_by_drupal status 0 --yes
+
+# import custom menu and custom block content
+cp /conf/structure_sync.data.yml /var/www/sync
+cp /conf/block.block.poweredbyseedmelab.yml /var/www/sync
+drush ib --choice safe
+drush im --choice safe
+# Toss installed menu and block
+rm /var/www/sync/structure_sync.data.yml
+# Set custom block
+drush config:import --partial --source /var/www/sync --yes
+drush pm:uninstall structure_sync --yes
 
 echo "---------------------------------"
 echo "Completed SeedMeLab installation"

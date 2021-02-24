@@ -1,0 +1,25 @@
+uuid: 47e368b0-d2ac-4fe7-9de2-ae9b24fb902d
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:0c9567ff-cd17-40d4-b512-4c986fa689de'
+  module:
+    - block_content
+  theme:
+    - bootstrap4
+id: poweredbyseedmelab
+theme: bootstrap4
+region: footer
+weight: 0
+provider: null
+plugin: 'block_content:0c9567ff-cd17-40d4-b512-4c986fa689de'
+settings:
+  id: 'block_content:0c9567ff-cd17-40d4-b512-4c986fa689de'
+  label: 'Powered by SeedMeLab'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility: {  }

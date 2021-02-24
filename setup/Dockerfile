@@ -68,17 +68,19 @@ COPY scripts /scripts
 RUN chmod +x /scripts/build/*.sh
 RUN chmod +x /scripts/install/*.sh
 
-# Copy php ini customizations for seedmelab
-COPY conf/99-seedmelab-php.ini /usr/local/etc/php/conf.d
+# Copy all conf to /
+COPY conf /conf
+
+# Move php.ini customizations for seedmelab
+RUN mv /conf/99-seedmelab-php.ini /usr/local/etc/php/conf.d
 
 # Configure web server
-COPY conf/seedmelab_vhost.conf /etc/apache2/sites-available/000-default.conf
+RUN mv /conf/seedmelab_vhost.conf /etc/apache2/sites-available/000-default.conf
 # Todo: Strip out extraneous modules that increase security footprint
 #RUN /scripts/build/configure_webserver.sh
 
-# Configure site cron to run every 5 minutes to build search index and perform background tasks
-COPY conf/site-cron.crontab /var/site-cron.crontab
-RUN crontab /var/site-cron.crontab
+# Set site cron to run every 5 minutes to build search index and perform background tasks
+RUN crontab /conf/site-cron.crontab
 
 # Install Composer
 RUN /scripts/build/install_composer.sh

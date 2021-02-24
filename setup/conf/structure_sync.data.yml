@@ -1,0 +1,27 @@
+menus:
+  -
+    menu_name: main
+    title: Data
+    parent: null
+    uri: 'internal:/foldershare'
+    link_title: ''
+    description: 'Manage and share data on this site'
+    enabled: '1'
+    expanded: '0'
+    weight: '1'
+    langcode: en
+    uuid: 39c3529d-6a97-4ae1-b8b4-27f0b1d9cbee
+blocks:
+  -
+    info: 'Powered by SeedMeLab'
+    langcode: en
+    uuid: 0c9567ff-cd17-40d4-b512-4c986fa689de
+    bundle: basic
+    revision_id: null
+    rev_id_current: null
+    fields:
+      body:
+        -
+          value: "<p class=\"text-align-center\" style=\"margin:2em; line-height: 3em;vertical-align:middle;\">Site powered by <a href=\"https://seedmelab.org\"><img alt=\"SeedMeLab logo\"  src=\"https://seedmelab.org/sites/default/files/seedmelab_logo-48.png\" style=\"height:24px;\" /></a></p>\r\n"
+          summary: ''
+          format: full_html
