@@ -3,6 +3,7 @@ persistent_data/
 
 # Ignore *.swp files created by text editor
 *.swp
+*.bak
 
 # Ignore other misc dir
 setup/scripts/utils
