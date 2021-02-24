@@ -31,13 +31,13 @@ If needed, start afresh by running ./clean-up.sh
 3.  Create SeedmeLab site
 This setup allows the seedmelab service to be run on localhost or on a public domain name.
 
-    a. Create a site on your localhost at <a href="http://localhost:8080">http://localhost:8080</a>.
+  a. Create a site on your localhost at <a href="http://localhost:8080">http://localhost:8080</a>.
 ```
     docker-compose up -d seedmelab
 ```
-    b. Create a public site on a host with your domain name e.g. example.com, this host must be accessible on your domain address.
-    
-    Set VIRTUAL_HOST environment variable to bring all four services(containers) up, this will also fetch the SSL certificate for the domain (this can take upto 3 mins).
+
+  b. Create a public site on a host with your domain name e.g. example.com, this host must be accessible on your domain address.
+Set VIRTUAL_HOST environment variable to bring all four services(containers) up, this will also fetch the SSL certificate for the domain (this can take upto 3 mins).   
 ```
     VIRTUAL_HOST=example.com docker-compose up -d
 ```
