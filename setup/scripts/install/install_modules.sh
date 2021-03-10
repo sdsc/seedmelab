@@ -63,15 +63,15 @@ install_core_modules() {
     views_ui --yes
 }
 
-echo "---------------------------------"
+echo "---------------------------------------------------------------"
 echo "Installing core modules..."
 install_core_modules
 
-echo "---------------------------------"
+echo "---------------------------------------------------------------"
 echo "Installing contrib modules..."
 install_contrib_modules
 
-echo "---------------------------------"
+echo "---------------------------------------------------------------"
 echo "Customizing SeedMeLab site..."
 install_contrib_themes
 # Set Bootstrap4 as default theme
@@ -79,20 +79,22 @@ drush config-set system.theme default bootstrap4 --yes
 # Disable search and powered blocks for bootstrap4 theme
 drush config:set block.block.bootstrap4_search_form status 0 --yes
 drush config:set block.block.bootstrap4_powered_by_drupal status 0 --yes
+# Set home page to /foldershare
+drush config:set system.site page.front /foldershare --yes
 
 # import custom menu and custom block content
 cp /conf/structure_sync.data.yml /var/www/sync
 cp /conf/block.block.poweredbyseedmelab.yml /var/www/sync
+drush config:import --partial --source /var/www/sync --yes
 drush ib --choice safe
 drush im --choice safe
+drush pm:uninstall structure_sync --yes
+drush cache:rebuild
 # Toss installed menu and block
 rm /var/www/sync/structure_sync.data.yml
-# Set custom block
-drush config:import --partial --source /var/www/sync --yes
-drush pm:uninstall structure_sync --yes
 
-echo "---------------------------------"
+echo "---------------------------------------------------------------"
 echo "Completed SeedMeLab installation"
-
-echo "---------------------------------"
 cat "/tmp/site_credentials.txt"
+echo "---------------------------------------------------------------"
+rm "/tmp/site_credentials.txt"

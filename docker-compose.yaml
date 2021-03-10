@@ -4,28 +4,17 @@ services:
     image: mysql:5.7
     volumes:
         # Store mysql server data on persistent volume
+        # Bind mounts on Mac OS is very slow so use delegated volumes, remove :delegated on other OS
         - ./persistent_data/db_data:/var/lib/mysql:delegated
     restart: always
     environment:
-      # The following environment variables are defined by MySQL docker image
-      # Read more about them at https://hub.docker.com/_/mysql/
-      # When these variables are assigned
-      #   mysql root user password is assigned as noted
-      #   database specified by MYSQL_DATABASE is created
-      #   user specified by MYSQL_USER is created with All Grants
-      #   password specified by MYSQL_PASSWORD is assigned to the user
-      #   The database, user and password are required for drupal installation
-      #
-      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
-      # To set your own password delete line with MYSQL_RANDOM_ROOT_PASSWORD 
-      # also uncomment line with MYSQL_ROOT_PASSWORD
-      # MYSQL_ROOT_PASSWORD: your_secret_password 
-      #
-      MYSQL_DATABASE: 'db4drupal'
-      MYSQL_USER: 'drupal'
-      # When MYSQL_PASSWORD is set to 'GENERATE_RANDOM_PASSWORD' 
-      # it will be changed during drupal installation, this will ensure security 
-      MYSQL_PASSWORD: 'GENERATE_RANDOM_PASSWORD'
+      # Refer to docker image for information on available environment at https://hub.docker.com/_/mysql/
+      # SeedMeLab requires a mysql database and a user
+      #   To create a new database and user provide the root password 
+      #   Alternatively, provide a pre created database, user and password to use for installation in seedmelab service
+      MYSQL_ROOT_PASSWORD: 'GENERATE_RANDOM_PASSWORD' 
+      # When MYSQL__ROOT_PASSWORD is set to 'GENERATE_RANDOM_PASSWORD' 
+      # it will be changed during drupal installation to ensure security 
 
   seedmelab:
     build:
@@ -36,21 +25,23 @@ services:
     - '8080:80'
     volumes:
       # Store entire drupal code and site data on persistent volume
+      # Bind mounts on Mac OS is very slow so use delegated volumes, remove :delegated on other OS
       - ./persistent_data/site_data:/var/www:delegated
     environment:
       APACHE_DOCUMENT_ROOT: '/var/www/web'
       # MYSQL variables must match as listed on db service for mysql above
-      # These are only used once by setup.sh and never again
-      #
-      MYSQL_DATABASE: 'db4drupal'
-      MYSQL_USER: 'drupal'
-      # When MYSQL_PASSWORD is set to 'GENERATE_RANDOM_PASSWORD' 
-      # it will be changed during drupal installation, this will ensure security 
-      MYSQL_PASSWORD: 'GENERATE_RANDOM_PASSWORD'
-      # If using your own MYSQL server
-      # additional variables for its host location and port must be specified
+      # These are only used once by install_drupal.sh and never again
+      # The root password is changed during installation
+      MYSQL_ROOT_PASSWORD: 'GENERATE_RANDOM_PASSWORD'
+      # If using your own MYSQL server, comment MYSQL_ROOT_PASSWORD and specify the following
+      # in a docker environment file
+      # Refer to instructions on required character set, collation and user privileges 
+      # https://www.drupal.org/docs/installing-drupal/step-3-create-a-database
       # MYSQL_HOST: 
       # MYSQL_PORT: 
+      # MYSQL_DATABASE: 
+      # MYSQL_USER: 
+      # MYSQL_PASSWORD: 
       #
       # Set site domain (fqdn) when deploying a public site
       # Ignore these local deployments

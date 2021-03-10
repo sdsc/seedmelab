@@ -24,6 +24,7 @@ SeedMeLab is built on top of [Drupal](https://drupal.org) content management sys
 If needed, start afresh by running ./clean-up.sh
 
 2. Build all services. 
+On Linux and Windows - Remove ":delegated" from Volume mounts in docker-compose.yml file. These are useful on Mac OS where the docker bind mounts are dead slow.
 ```
     docker-compose build
 ```
@@ -49,9 +50,17 @@ This setup allows the seedmelab service to be run on localhost or on a public do
 ```
     docker-compose down
 ```
+6. Start afresh
+```
+    docker-compose stop seedmelab; docker-compose rm -f seedmelab; docker-compose stop db; docker-compose rm -f db
+    ./clean-up.sh
+    docker-compose build
+    docker-compose up -d seedmelab
+    docker-compose exec seedmelab bash /scripts/install/setup.sh
+```
 
 #### Database notes
-If you already have a  MySQL/MariaDB database server, use the following steps to create a database and a user with following privileges (refer to official [documentation](https://www.drupal.org/docs/installing-drupal/step-3-create-a-database)). Remove the db image as a dependency for seedmelab container in the docker-compose.yaml file .
+If you already have a  MySQL/MariaDB database server, use the following steps to create a database and a user with following privileges (refer to official [documentation](https://www.drupal.org/docs/installing-drupal/step-3-create-a-database)). Remove the db image as a dependency for seedmelab container in the docker-compose.yaml file and configure the docker environement file with variables noted in the seedmelab service.
 
 
 ## Using SeedMeLab

@@ -15,12 +15,12 @@ TMP_DIR=`mktemp -d`
 echo "Fetching drupal/recommended-project with composer... at ${TMP_DIR}"
 composer create-project drupal/recommended-project:^9 ${TMP_DIR} --no-interaction
 
-echo "Moving drupal project from ${TMP_DIR} to ${DRUPAL_SITE_DIR}"
-mv "${TMP_DIR}/composer.json" ${DRUPAL_SITE_DIR}
-mv "${TMP_DIR}/composer.lock" ${DRUPAL_SITE_DIR}
-mv "${TMP_DIR}/vendor" ${DRUPAL_SITE_DIR}
-mv "${TMP_DIR}/web/*.*" "${DRUPAL_SITE_DIR}/web/"
-rmdir ${TMP_DIR}
+echo "Copying drupal project from ${TMP_DIR} to ${DRUPAL_SITE_DIR}"
+cp "${TMP_DIR}/composer.json" ${DRUPAL_SITE_DIR}
+cp "${TMP_DIR}/composer.lock" ${DRUPAL_SITE_DIR}
+cp "${TMP_DIR}/vendor" ${DRUPAL_SITE_DIR}
+cp "${TMP_DIR}/web/*.*" "${DRUPAL_SITE_DIR}/web/"
+rm -rf ${TMP_DIR}
 
 echo "Fetching SeedMeLab dependencies with composer..."
 cd ${DRUPAL_SITE_DIR}
